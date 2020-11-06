@@ -146,33 +146,34 @@ class AES():
         roundResult= self.addRoundKey(mix, expandedKey[round])
 
         return transformMatrixToStream(roundResult)
-
-    def SingleRoundDecrypt(self,cipherText,expandedKey,round):
-            
-            cipherText = transformStreamToMatrix(cipherText)
-            if round==1:
-                pxorK = self.addRoundKey(cipherText,expandedKey[0])
-    
-            else:
-                pxorK = cipherText
-            shift = self.shiftRows(pxorK,True)
-    
-            sub = self.substituteBytes(shift,True)
-            roundResult= self.addRoundKey(sub, expandedKey[round])
-    
-            if round!= 10:
-                mix = self.mixColumns(roundResult,True)
-            else: 
-                mix =roundResult
-                
-            return transformMatrixToStream(mix)
-        
     def Encrypt(self,plainText,key):
         key = transformStreamToMatrix(key)
         keys = aes.keyExpansion(key)
         for i in range(1,11):
             plainText = aes.SingleRoundEncrypt(plainText, keys, i)
             print(transformMatrixToStream(plainText))
+
+    # def SingleRoundDecrypt(self,cipherText,expandedKey,round):
+            
+    #         cipherText = transformStreamToMatrix(cipherText)
+    #         if round==1:
+    #             pxorK = self.addRoundKey(cipherText,expandedKey[0])
+    
+    #         else:
+    #             pxorK = cipherText
+    #         shift = self.shiftRows(pxorK,True)
+    
+    #         sub = self.substituteBytes(shift,True)
+    #         roundResult= self.addRoundKey(sub, expandedKey[round])
+    
+    #         if round!= 10:
+    #             mix = self.mixColumns(roundResult,True)
+    #         else: 
+    #             mix =roundResult
+                
+    #         return transformMatrixToStream(mix)
+        
+ 
 
     # def Decrypt(self,cipherText,key):
     #     key = transformStreamToMatrix(key)

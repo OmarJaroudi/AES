@@ -7,6 +7,7 @@ Created on Fri Nov  6 13:23:41 2020
 
 from utils import BinToHex,HexToBin,stringXOR,getColumn,xorVectors,transformMatrixToStream,transformStreamToMatrix,transposeMatrix
 from galois import multiply
+import numpy as np
 
 
 
@@ -59,10 +60,17 @@ class AES():
 
         self.rcon = ['01','02','04','08','10','20','40','80','1b','36']
         self.rconVectors = [[r,'00','00','00'] for r in self.rcon ]
+        
         self.keyOutput = ""
         self.plainTextOutput = ""
         
 
+    def printmatrix(self, data):
+        for i in data:
+            print(i)
+    
+    
+    
     def addToOutput(self, name, data):
         self.plainTextOutput += str(name) + ": \n" + "\n" + "************" + "\n"
             
@@ -95,8 +103,11 @@ class AES():
     def shiftRows(self,state,inv=False):
         newState = []
         for i,row in enumerate(state):
+            
             if(inv):
-               newRow = row[1:len(row):] +row[0:1:] 
+              
+               newRow = np.roll(row,i)                   
+               #newRow = row[1:len(row):] +row[0:1:] 
             else:
                 newRow = row[i::] + row[:i:]           
             newState.append(newRow)
@@ -204,59 +215,64 @@ class AES():
             print(transformMatrixToStream(plainText))
 
 
-    # def SingleRoundDecrypt(self,cipherText,expandedKey,round):
-            
-    #         cipherText = transformStreamToMatrix(cipherText)
-    #         if round==1:
-    #             pxorK = self.addRoundKey(cipherText,expandedKey[0])
+    def SingleRoundDecrypt(self,cipherText,expandedKey,round):
     
-    #         else:
-    #             pxorK = cipherText
-    #         shift = self.shiftRows(pxorK,True)
+         cipherText = transformStreamToMatrix(cipherText)
+         
+         if round==1:
+             pxorK = self.addRoundKey(cipherText,expandedKey[0])
+        
+         else:
+             pxorK = cipherText
+         self.printmatrix(pxorK)
+         print("*******")
+         shift = self.shiftRows(pxorK,True)
+         self.printmatrix(shift)
+         sub = self.substituteBytes(shift,True)
+         
+         roundResult = self.addRoundKey(sub, expandedKey[round])
+        
+     
+         if round!= 10:
+             mix = self.mixColumns(roundResult,True)
+         else: 
+             mix = roundResult
+        
     
-    #         sub = self.substituteBytes(shift,True)
-    #         roundResult= self.addRoundKey(sub, expandedKey[round])
-    
-    #         if round!= 10:
-    #             mix = self.mixColumns(roundResult,True)
-    #         else: 
-    #             mix =roundResult
-                
-    #         return transformMatrixToStream(mix)
+         return transformMatrixToStream(mix)
         
  
 
-    # def Decrypt(self,cipherText,key):
-    #     key = transformStreamToMatrix(key)
-    #     keys = aes.keyExpansion(key)
-    #     keys = keys[::-1]
-    #     for i in range(1,11):
-    #         cipherText = aes.SingleRoundDecrypt(cipherText, keys, i)
-    #         print(transformMatrixToStream(cipherText))
+    def Decrypt(self,cipherText,key):
+         key = transformStreamToMatrix(key)
+         keys = aes.keyExpansion(key)
+         keys = keys[::-1]
+
+         for i in range(1,11):
+             cipherText = aes.SingleRoundDecrypt(cipherText, keys, i)
+             print(transformMatrixToStream(cipherText))
                 
 
 aes = AES()
-key = '0f1571c947d9e8590cb7add6af7f6798'
-plainText = '0123456789abcdeffedcba9876543210'
-cipherText = 'ff0b844a0853bf7c6934ab4364148fb9'
-
+cipherText = '3a0352540ea9ec5626fa83c03d3b8403'
 plainText = '000102030405060708090a0b0c0d0e0f'
 key =       '01010101010101010101010101010101'
 
-aes.Encrypt(plainText,key)
-print("\n")
+#aes.Encrypt(plainText,key)
+aes.Decrypt(cipherText, key)
+
 
 #print(aes.plainTextOutput)
 #
-with open("AES_Encrypt.txt","w") as f:
-    f.write(aes.plainTextOutput)
-f.close()
+#with open("AES_Encrypt.txt","w") as f:
+#    f.write(aes.plainTextOutput)
+#f.close()
+#
+#with open("KeyExpansion.txt", "w") as f:
+#    f.write(aes.keyOutput)
+#f.close()
 
-with open("KeyExpansion.txt", "w") as f:
-    f.write(aes.keyOutput)
-f.close()
 
-# aes.Decrypt(cipherText, key)
 
     
         

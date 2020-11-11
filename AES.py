@@ -7,6 +7,9 @@ Created on Fri Nov  6 13:23:41 2020
 
 from utils import BinToHex,HexToBin,stringXOR,getColumn,xorVectors,transformMatrixToStream,transformStreamToMatrix,transposeMatrix
 from galois import multiply
+
+
+
 class AES():
     def __init__(self):
         self.sbox = [
@@ -56,7 +59,16 @@ class AES():
 
         self.rcon = ['01','02','04','08','10','20','40','80','1b','36']
         self.rconVectors = [[r,'00','00','00'] for r in self.rcon ]
+        self.keyOutput = ""
+        self.plainTextOutput = ""
+        
 
+    def addToOutput(self, name, data):
+        self.plainTextOutput += str(name) + ": \n" + "\n" + "************" + "\n"
+            
+        for i in data:
+            self.plainTextOutput += str(" ".join(i)) + "\n"
+        self.plainTextOutput += "\n" + "************" + "\n\n"
             
     def addRoundKey(self,state,key):
         newState = [[0 for j in range(len(state))]for i in range(len(state))]
@@ -79,6 +91,7 @@ class AES():
                 else:
                     newState[i][j] = self.sbox[rowIdx][columnIdx]
         return newState
+   
     def shiftRows(self,state,inv=False):
         newState = []
         for i,row in enumerate(state):
@@ -116,10 +129,28 @@ class AES():
                     temp[j] = self.sbox[row][col]
                 temp = xorVectors(temp,self.rconVectors[int((i-1)/4)])
             w.append(xorVectors(temp,w[i-4]))
+        
+       
+        
+        
         keys = [w[i:i+4] for i in range(0, len(w), 4)]
+        
+        
+        self.keyOutput += "Key Expansion: \n"+  "\n" + "************" + "\n"
+        for i in keys:
+            for j in i:
+                self.keyOutput += str(" ".join(j)) + "\n"
+            self.keyOutput += "\n" + "************" + "\n"
+        
+        
+        
         for i,k in enumerate(keys):
             keys[i] = transposeMatrix(k)
         return keys
+        
+        
+    
+    
     def multiplyVectorByMcols(self,vector):
        keyState = [[vector[0],'00','00','00'],
                    [vector[1],'00','00','00'],
@@ -131,27 +162,47 @@ class AES():
         
         plainText = transformStreamToMatrix(plainText)
         if round==1:
-            pxorK = self.addRoundKey(plainText,expandedKey[0])
-
+            pxorK = self.addRoundKey(plainText,expandedKey[0]) 
+            self.addToOutput("First Round XOR", pxorK)
+        
         else:
             pxorK = plainText
+            
         sub = self.substituteBytes(pxorK)
-
+        self.addToOutput("Substitute", sub)
+        
         shift = self.shiftRows(sub)
+        self.addToOutput("Shifting", shift)
+        
         if round!= 10:
             mix = self.mixColumns(shift)
+            self.addToOutput("Mixing", mix)
         else: 
             mix =shift
+            self.addToOutput("Last Mix", mix)
         
         roundResult= self.addRoundKey(mix, expandedKey[round])
+        self.addToOutput("Adding round key", roundResult)
 
         return transformMatrixToStream(roundResult)
+    
     def Encrypt(self,plainText,key):
+        
         key = transformStreamToMatrix(key)
         keys = aes.keyExpansion(key)
+        
+        self.plainTextOutput += "PlainText: \n" + "\n" + "************" + "\n"
+        for i in range(0, len(plainText), 2):
+            if(i%8 == 0 and i != 0):
+                self.plainTextOutput += "\n"
+            self.plainTextOutput += plainText[i] + plainText[i+1] + " "
+            
+        self.plainTextOutput += "\n" + "************" + "\n\n"
+        
         for i in range(1,11):
             plainText = aes.SingleRoundEncrypt(plainText, keys, i)
             print(transformMatrixToStream(plainText))
+
 
     # def SingleRoundDecrypt(self,cipherText,expandedKey,round):
             
@@ -191,6 +242,17 @@ cipherText = 'ff0b844a0853bf7c6934ab4364148fb9'
 
 aes.Encrypt(plainText,key)
 print("\n")
+
+#print(aes.plainTextOutput)
+#
+with open("AES_Encrypt.txt","w") as f:
+    f.write(aes.plainTextOutput)
+f.close()
+
+with open("KeyExpansion.txt", "w") as f:
+    f.write(aes.keyOutput)
+f.close()
+
 # aes.Decrypt(cipherText, key)
 
     

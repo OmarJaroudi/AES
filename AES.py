@@ -65,20 +65,11 @@ class AES():
 
     def addToOutput(self, name, data):
         self.plainTextOutput += str(name) + ": \n" + "\n" + "************" + "\n"
-        
-        temp = []
+            
         for i in data:
-            for j in i:
-                temp.append(j)
-        
-        for i in range(0,len(temp)):
-            self.plainTextOutput += str(temp[i]) + " " + str(temp[i+4]) + " " + str(temp[i+8]) + " " + str(temp[i+12]) + "\n"
-            if(i == 3):
-                break
+            self.plainTextOutput += str(" ".join(i)) + "\n"
         self.plainTextOutput += "\n" + "************" + "\n\n"
-        
-        
-        
+            
     def addRoundKey(self,state,key):
         newState = [[0 for j in range(len(state))]for i in range(len(state))]
         for i in range(len(state)):
@@ -146,18 +137,9 @@ class AES():
         
         
         self.keyOutput += "Key Expansion: \n"+  "\n" + "************" + "\n"
-        
-        
         for i in keys:
-            temp = []
-            for k in i:
-                for l in k:
-                    temp.append(l)
-            #print(temp)
-            for j in range(0,len(temp)):        
-                self.keyOutput += str(temp[j]) + " " + str(temp[j+4]) + " " + str(temp[j+8]) + " " + str(temp[j+12]) + "\n"
-                if(j == 3):
-                    break
+            for j in i:
+                self.keyOutput += str(" ".join(j)) + "\n"
             self.keyOutput += "\n" + "************" + "\n"
         
         
@@ -181,7 +163,6 @@ class AES():
         plainText = transformStreamToMatrix(plainText)
         if round==1:
             pxorK = self.addRoundKey(plainText,expandedKey[0]) 
-            print(pxorK)
             self.addToOutput("First Round XOR", pxorK)
         
         else:
@@ -204,29 +185,6 @@ class AES():
         self.addToOutput("Adding round key", roundResult)
 
         return transformMatrixToStream(roundResult)
-
-
-    def SingleRoundDecrypt(self,cipherText,expandedKey,round):
-                
-         cipherText = transformStreamToMatrix(cipherText)
-         
-         if round==1:
-             pxorK = self.addRoundKey(cipherText,expandedKey[0])
-
-         else:
-             pxorK = cipherText
-         shift = self.shiftRows(pxorK,True)
-
-         sub = self.substituteBytes(shift,True)
-         roundResult= self.addRoundKey(sub, expandedKey[round])
-
-         if round!= 10:
-             mix = self.mixColumns(roundResult,True)
-         else: 
-             mix =roundResult
-            
-         return transformMatrixToStream(mix)
-
     
     def Encrypt(self,plainText,key):
         
@@ -234,11 +192,11 @@ class AES():
         keys = aes.keyExpansion(key)
         
         self.plainTextOutput += "PlainText: \n" + "\n" + "************" + "\n"
-        
         for i in range(0, len(plainText), 2):
-            self.plainTextOutput += plainText[i] + plainText[i+1] + " " + plainText[i+6] + plainText[i+7] + " " + plainText[i+14] + plainText[i+15] + " " + plainText[i+22] + plainText[i+23] + "\n"
-            if(i == 6):
-                break
+            if(i%8 == 0 and i != 0):
+                self.plainTextOutput += "\n"
+            self.plainTextOutput += plainText[i] + plainText[i+1] + " "
+            
         self.plainTextOutput += "\n" + "************" + "\n\n"
         
         for i in range(1,11):
@@ -246,15 +204,35 @@ class AES():
             print(transformMatrixToStream(plainText))
 
 
-    def Decrypt(self,cipherText,key):
-         key = transformStreamToMatrix(key)
-         keys = aes.keyExpansion(key)
-         keys = keys[::-1]
-         
-         
-#         for i in range(1,11):
-#             cipherText = aes.SingleRoundDecrypt(cipherText, keys, i)
-#             print(transformMatrixToStream(cipherText))
+    # def SingleRoundDecrypt(self,cipherText,expandedKey,round):
+            
+    #         cipherText = transformStreamToMatrix(cipherText)
+    #         if round==1:
+    #             pxorK = self.addRoundKey(cipherText,expandedKey[0])
+    
+    #         else:
+    #             pxorK = cipherText
+    #         shift = self.shiftRows(pxorK,True)
+    
+    #         sub = self.substituteBytes(shift,True)
+    #         roundResult= self.addRoundKey(sub, expandedKey[round])
+    
+    #         if round!= 10:
+    #             mix = self.mixColumns(roundResult,True)
+    #         else: 
+    #             mix =roundResult
+                
+    #         return transformMatrixToStream(mix)
+        
+ 
+
+    # def Decrypt(self,cipherText,key):
+    #     key = transformStreamToMatrix(key)
+    #     keys = aes.keyExpansion(key)
+    #     keys = keys[::-1]
+    #     for i in range(1,11):
+    #         cipherText = aes.SingleRoundDecrypt(cipherText, keys, i)
+    #         print(transformMatrixToStream(cipherText))
                 
 
 aes = AES()
@@ -262,23 +240,23 @@ key = '0f1571c947d9e8590cb7add6af7f6798'
 plainText = '0123456789abcdeffedcba9876543210'
 cipherText = 'ff0b844a0853bf7c6934ab4364148fb9'
 
+plainText = '000102030405060708090a0b0c0d0e0f'
+key =       '01010101010101010101010101010101'
+
 aes.Encrypt(plainText,key)
-#aes.Decrypt(cipherText, key)
 print("\n")
-#print(aes.keyOutput)
 
-#ff0b844a0853bf7c6934ab4364148fb9
-print(aes.plainTextOutput)
-
+#print(aes.plainTextOutput)
+#
 with open("AES_Encrypt.txt","w") as f:
     f.write(aes.plainTextOutput)
 f.close()
-#
+
 with open("KeyExpansion.txt", "w") as f:
     f.write(aes.keyOutput)
 f.close()
 
-
+# aes.Decrypt(cipherText, key)
 
     
         

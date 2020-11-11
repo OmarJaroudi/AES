@@ -72,7 +72,7 @@ class AES():
                 temp.append(j)
         
         for i in range(0,len(temp)):
-            self.plainTextOutput += str(temp[i]) + " " + str(temp[i+3]) + " " + str(temp[i+4]) + " " + str(temp[i+5]) + "\n"
+            self.plainTextOutput += str(temp[i]) + " " + str(temp[i+4]) + " " + str(temp[i+8]) + " " + str(temp[i+12]) + "\n"
             if(i == 3):
                 break
         self.plainTextOutput += "\n" + "************" + "\n\n"
@@ -153,8 +153,9 @@ class AES():
             for k in i:
                 for l in k:
                     temp.append(l)
+            #print(temp)
             for j in range(0,len(temp)):        
-                self.keyOutput += str(temp[j]) + " " + str(temp[j+3]) + " " + str(temp[j+7]) + " " + str(temp[j+11]) + "\n"
+                self.keyOutput += str(temp[j]) + " " + str(temp[j+4]) + " " + str(temp[j+8]) + " " + str(temp[j+12]) + "\n"
                 if(j == 3):
                     break
             self.keyOutput += "\n" + "************" + "\n"
@@ -180,6 +181,7 @@ class AES():
         plainText = transformStreamToMatrix(plainText)
         if round==1:
             pxorK = self.addRoundKey(plainText,expandedKey[0]) 
+            print(pxorK)
             self.addToOutput("First Round XOR", pxorK)
         
         else:
@@ -263,15 +265,15 @@ cipherText = 'ff0b844a0853bf7c6934ab4364148fb9'
 aes.Encrypt(plainText,key)
 #aes.Decrypt(cipherText, key)
 print("\n")
-print(aes.keyOutput)
-#ff0b844a0853bf7c6934ab4364148fb9
+#print(aes.keyOutput)
 
-#print(aes.plainTextOutput)
+#ff0b844a0853bf7c6934ab4364148fb9
+print(aes.plainTextOutput)
 
 with open("AES_Encrypt.txt","w") as f:
     f.write(aes.plainTextOutput)
 f.close()
-
+#
 with open("KeyExpansion.txt", "w") as f:
     f.write(aes.keyOutput)
 f.close()

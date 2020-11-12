@@ -6,6 +6,9 @@ Created on Fri Nov  6 13:37:11 2020
 """
 from numpy import transpose
 from math import sqrt
+import pickle as pkl
+
+
 
 def HexToBin(hexStr):
     return bin(int(hexStr,16))[2:]
@@ -57,3 +60,5 @@ def transformMatrixToStream(matrix):
         for row in matrix:
             stream+=str(row[i])
     return stream
+
+

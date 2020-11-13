@@ -104,17 +104,30 @@ class AES():
         return newState
     
     def keyExpansion(self,keyMatrix):
-        w = [getColumn(keyMatrix,i) for i in range(len(keyMatrix))]
-        for i in range(4,44):
+        N = len(keyMatrix[0])
+        if N==4:
+            length = 44
+        elif N==6:
+            length = 52
+        else:
+            length = 60
+        
+        w = [getColumn(keyMatrix,i) for i in range(N)]
+        for i in range(N,length):
             temp = w[i-1]
-            if i % 4 == 0:
-                temp = temp[1::] + temp[:1:]#circular left shift of bytes
+            if i % N == 0:
+                temp = temp[1::] + temp[:1:]
                 for j,elem in enumerate(temp):
                     row = int(elem[0],16)
                     col = int(elem[1],16)
                     temp[j] = self.sbox[row][col]
-                temp = xorVectors(temp,self.rconVectors[int((i-1)/4)])
-            w.append(xorVectors(temp,w[i-4]))
+                temp = xorVectors(temp,self.rconVectors[int((i-1)/N)])
+            elif N==8 and i%N==4:
+                for j,elem in enumerate(temp):
+                    row = int(elem[0],16)
+                    col = int(elem[1],16)
+                    temp[j] = self.sbox[row][col]
+            w.append(xorVectors(temp,w[i-N]))
         
        
         
@@ -134,7 +147,6 @@ class AES():
             keys[i] = transposeMatrix(k)
         return keys
         
-        
     
     
     def multiplyVectorByMcols(self,vector):
@@ -144,7 +156,7 @@ class AES():
                    [vector[3],'00','00','00']]
        return [row[0] for row in self.mixColumns(keyState)]
    
-    def SingleRoundEncrypt(self,plainText,expandedKey,round):
+    def SingleRoundEncrypt(self,plainText,expandedKey,round,MaxRound):
         
         plainText = transformStreamToMatrix(plainText)
         if round==1:
@@ -160,7 +172,7 @@ class AES():
         shift = self.shiftRows(sub)
         self.addToOutput("Shifting", shift)
         
-        if round!= 10:
+        if round!= MaxRound:
             mix = self.mixColumns(shift)
             self.addToOutput("Mixing", mix)
         else: 
@@ -173,8 +185,18 @@ class AES():
         return transformMatrixToStream(roundResult)
     
     def Encrypt(self,plainText,key):
+        if len(key)==32:
+            MaxRound =10
+        elif len(key)==48:
+            MaxRound = 12
+        elif len(key)==64:
+            MaxRound = 14
+        else:
+            print("Key length not valid")
+            return
         
         key = transformStreamToMatrix(key)
+        
         keys = self.keyExpansion(key)
         
         self.plainTextOutput += "PlainText: \n" + "\n" + "************" + "\n"
@@ -185,8 +207,8 @@ class AES():
             
         self.plainTextOutput += "\n" + "************" + "\n\n"
         
-        for i in range(1,11):
-            plainText = self.SingleRoundEncrypt(plainText, keys, i)
+        for i in range(1,MaxRound+1):
+            plainText = self.SingleRoundEncrypt(plainText, keys, i,MaxRound)
             print(transformMatrixToStream(plainText))
 
 
@@ -228,12 +250,12 @@ class AES():
              print(transformMatrixToStream(cipherText))
                 
 
-# aes = AES()
-# cipherText = '3a0352540ea9ec5626fa83c03d3b8403'
-# plainText = '000102030405060708090a0b0c0d0e0f'
-# key =       '01010101010101010101010101010101'
+aes = AES()
+cipherText = '3a0352540ea9ec5626fa83c03d3b8403'
+plainText = '000102030405060708090a0b0c0d0e0f'
+key =       '01010101010101010101010101010101'
 
-# aes.Encrypt(plainText,key)
+aes.Encrypt(plainText,key)
 
 
 # aes.Decrypt(cipherText, key)

@@ -48,11 +48,11 @@ def transposeMatrix(matrix):
 
 def transformStreamToMatrix(stream):
         inputMatrix = [stream[i:i+2] for i in range(0,len(stream),2)]
-        width = int(sqrt(len(inputMatrix)))
-        state = [[0 for j in range(width)]for i in range(width)]
+        width = int((len(inputMatrix))/4)
+        state = [[0 for j in range(width)]for i in range(4)]
         for i in range(width):
-            for j in range(width):
-                state[j][i] = inputMatrix[i*width + j]
+            for j in range(4):
+                state[j][i] = inputMatrix[i*4 + j]
         return state
 def transformMatrixToStream(matrix):
     stream = ""
@@ -62,3 +62,6 @@ def transformMatrixToStream(matrix):
     return stream
 
 
+def printmatrix(self, data):
+    for i in data:
+        print(i)

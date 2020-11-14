@@ -9,7 +9,7 @@ from utils import BinToHex,HexToBin,stringXOR,getColumn,xorVectors,transformMatr
 from galois import multiply
 import numpy as np
 from pickle import load
-
+from copy import deepcopy
 
 class AES():
     def __init__(self):
@@ -109,13 +109,16 @@ class AES():
             length = 44
         elif N==6:
             length = 52
-        else:
+        elif N == 8:
             length = 60
         
         w = [getColumn(keyMatrix,i) for i in range(N)]
+        print(w)
         for i in range(N,length):
-            temp = w[i-1]
+            
+            temp = deepcopy(w[i-1]) 
             if i % N == 0:
+                
                 temp = temp[1::] + temp[:1:]
                 for j,elem in enumerate(temp):
                     row = int(elem[0],16)
@@ -123,17 +126,25 @@ class AES():
                     temp[j] = self.sbox[row][col]
                 temp = xorVectors(temp,self.rconVectors[int((i-1)/N)])
             elif N==8 and i%N==4:
+                
                 for j,elem in enumerate(temp):
                     row = int(elem[0],16)
                     col = int(elem[1],16)
                     temp[j] = self.sbox[row][col]
+                    
+            
+            
             w.append(xorVectors(temp,w[i-N]))
+            
+        
+        
         
        
         
-        
+        print(w)
         keys = [w[i:i+4] for i in range(0, len(w), 4)]
         
+        self.printmatrix(keys)
         
         self.keyOutput += "Key Expansion: \n"+  "\n" + "************" + "\n"
         for i in keys:
@@ -253,7 +264,7 @@ class AES():
 aes = AES()
 cipherText = '3a0352540ea9ec5626fa83c03d3b8403'
 plainText = '000102030405060708090a0b0c0d0e0f'
-key =       '01010101010101010101010101010101'
+key =       '603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4'
 
 aes.Encrypt(plainText,key)
 

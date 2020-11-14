@@ -10,6 +10,7 @@ from galois import multiply
 import numpy as np
 from pickle import load
 from copy import deepcopy
+from KeyExpansion import keyExpansion
 
 class AES():
     def __init__(self):
@@ -103,61 +104,6 @@ class AES():
                 newState[i][j] = '0' + newState[i][j] if len(newState[i][j]) == 1 else newState[i][j]
         return newState
     
-    def keyExpansion(self,keyMatrix):
-        N = len(keyMatrix[0])
-        if N==4:
-            length = 44
-        elif N==6:
-            length = 52
-        elif N == 8:
-            length = 60
-        
-        w = [getColumn(keyMatrix,i) for i in range(N)]
-        print(w)
-        for i in range(N,length):
-            
-            temp = deepcopy(w[i-1]) 
-            if i % N == 0:
-                
-                temp = temp[1::] + temp[:1:]
-                for j,elem in enumerate(temp):
-                    row = int(elem[0],16)
-                    col = int(elem[1],16)
-                    temp[j] = self.sbox[row][col]
-                temp = xorVectors(temp,self.rconVectors[int((i-1)/N)])
-            elif N==8 and i%N==4:
-                
-                for j,elem in enumerate(temp):
-                    row = int(elem[0],16)
-                    col = int(elem[1],16)
-                    temp[j] = self.sbox[row][col]
-                    
-            
-            
-            w.append(xorVectors(temp,w[i-N]))
-            
-        
-        
-        
-       
-        
-        print(w)
-        keys = [w[i:i+4] for i in range(0, len(w), 4)]
-        
-        self.printmatrix(keys)
-        
-        self.keyOutput += "Key Expansion: \n"+  "\n" + "************" + "\n"
-        for i in keys:
-            for j in i:
-                self.keyOutput += str(" ".join(j)) + "\n"
-            self.keyOutput += "\n" + "************" + "\n"
-        
-        
-        
-        for i,k in enumerate(keys):
-            keys[i] = transposeMatrix(k)
-        return keys
-        
     
     
     def multiplyVectorByMcols(self,vector):
@@ -208,7 +154,7 @@ class AES():
         
         key = transformStreamToMatrix(key)
         
-        keys = self.keyExpansion(key)
+        keys = keyExpansion(key,  self.rconVectors, self.sbox)
         
         self.plainTextOutput += "PlainText: \n" + "\n" + "************" + "\n"
         for i in range(0, len(plainText), 2):
@@ -223,7 +169,7 @@ class AES():
             print(transformMatrixToStream(plainText))
 
 
-    def SingleRoundDecrypt(self,cipherText,expandedKey,round):
+    def SingleRoundDecrypt(self,cipherText,expandedKey,round, MaxRound):
     
          cipherText = transformStreamToMatrix(cipherText)
          
@@ -232,16 +178,16 @@ class AES():
         
          else:
              pxorK = cipherText
-         self.printmatrix(pxorK)
-         print("*******")
+         
+         
          shift = self.shiftRows(pxorK,True)
-         self.printmatrix(shift)
+         
          sub = self.substituteBytes(shift,True)
          
          roundResult = self.addRoundKey(sub, expandedKey[round])
         
      
-         if round!= 10:
+         if round!= MaxRound:
              mix = self.mixColumns(roundResult,True)
          else: 
              mix = roundResult
@@ -252,24 +198,35 @@ class AES():
  
 
     def Decrypt(self,cipherText,key):
+         
+         if len(key)==32:
+            MaxRound =10
+         elif len(key)==48:
+            MaxRound = 12
+         elif len(key)==64:
+            MaxRound = 14
+         else:
+             print("Key length not valid")
+             return
+        
          key = transformStreamToMatrix(key)
-         keys = self.keyExpansion(key)
+         keys = keyExpansion(key,  self.rconVectors, self.sbox)
          keys = keys[::-1]
 
-         for i in range(1,11):
-             cipherText = self.SingleRoundDecrypt(cipherText, keys, i)
+         for i in range(1,MaxRound + 1):
+             cipherText = self.SingleRoundDecrypt(cipherText, keys, i, MaxRound)
              print(transformMatrixToStream(cipherText))
                 
 
 aes = AES()
-cipherText = '3a0352540ea9ec5626fa83c03d3b8403'
+cipherText ='b7bf3a5df43989dd97f0fa97ebce2f4a'
 plainText = '000102030405060708090a0b0c0d0e0f'
 key =       '603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4'
 
 aes.Encrypt(plainText,key)
 
 
-# aes.Decrypt(cipherText, key)
+#aes.Decrypt(cipherText, key)
 
 
 #print(aes.plainTextOutput)

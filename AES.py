@@ -37,7 +37,7 @@ class AES():
         file.close()
         
         
-        self.keyOutput = ""
+        self.keyOutput = []
         self.plainTextOutput = ""
         self.encryptrounds = []
         self.decryptrounds = []
@@ -45,6 +45,7 @@ class AES():
         self.dec_string = ""
         self.encOutput = []
         self.decOutput = []
+        self.keySteps = []
 
     def printmatrix(self, data):
         for i in data:
@@ -179,7 +180,7 @@ class AES():
         
         key = transformStreamToMatrix(key)
         
-        keys = keyExpansion(key,  self.rconVectors, self.sbox)
+        keys, self.keySteps, self.keyOutput = keyExpansion(key,  self.rconVectors, self.sbox)
         
         self.plainTextOutput += "PlainText: \n" + "\n" + "************" + "\n"
         for i in range(0, len(plainText), 2):
@@ -241,7 +242,7 @@ class AES():
              return
         
          key = transformStreamToMatrix(key)
-         keys = keyExpansion(key,  self.rconVectors, self.sbox)
+         keys, self.keySteps, self.keyOutput = keyExpansion(key,  self.rconVectors, self.sbox)
          keys = keys[::-1]
 
          for i in range(1,MaxRound + 1):

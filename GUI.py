@@ -71,6 +71,8 @@ class GUI(QWidget):
         
         self.show()
         
+        self.setWindowTitle("AES")
+        
         self.success_signal.connect(lambda:self.cleanUp())
         
     def encryptRequest(self):

@@ -23,7 +23,7 @@ class EncryptWindow(QWidget):
     
         self.aes.Encrypt(plaintext,key)
             
-#        self.setFixedSize(500,500)
+        self.setFixedSize(600,600)
         
         self.RoundOutputs = QLabel("")
         self.RoundOutputs.setStyleSheet("QLabel {color:white;font-size:15px;}")
@@ -35,8 +35,8 @@ class EncryptWindow(QWidget):
         self.back.setStyleSheet("QPushButton {background-color: #1abc9c;font-size:20px;}")
         
         
-        self.output = QLabel("Press Next Round to Show Results")
-        self.output.setStyleSheet("QLabel {color:white;font-size:15px;}")
+        self.output = QTextEdit("Press Next Round to Show Results")
+        self.output.setStyleSheet("QTextEdit {color:white;font-size:15px;}")
 #        self.output.setAlignment(Qt.AlignCenter) 
         
         

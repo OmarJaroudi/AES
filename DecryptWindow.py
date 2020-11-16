@@ -5,7 +5,7 @@ Created on Mon Nov 16 10:56:38 2020
 @author: WarPeace101
 """
 
-from PyQt5.QtWidgets import QWidget,QLabel,QPushButton,QLineEdit,QHBoxLayout,QVBoxLayout,QSpacerItem
+from PyQt5.QtWidgets import QWidget,QLabel,QPushButton,QLineEdit,QHBoxLayout,QVBoxLayout,QSpacerItem, QTextEdit
 from AES import AES
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
@@ -20,7 +20,7 @@ class DecryptWindow(QWidget):
         self.setStyleSheet("QWidget {background-color:#34495e;}")
         self.ciphertext = ciphertext
         self.key = key
-#        self.setFixedSize(350,200)
+        self.setFixedSize(600,600)
         
         self.aes.Decrypt(self.ciphertext, self.key)
         
@@ -32,8 +32,8 @@ class DecryptWindow(QWidget):
         self.RoundOutputs = QLabel("")
         self.RoundOutputs.setStyleSheet("QLabel {color:white;font-size:15px;}")
         
-        self.output = QLabel("Press Next Round to Show Results")
-        self.output.setStyleSheet("QLabel {color:white;font-size:15px;}")
+        self.output = QTextEdit("Press Next Round to Show Results")
+        self.output.setStyleSheet("QTextEdit {color:white;font-size:15px;}")
 #        self.output.setAlignment(Qt.AlignCenter) 
         
         self.hbox = QHBoxLayout()
@@ -72,7 +72,8 @@ class DecryptWindow(QWidget):
         else:
             self.errorMessage.setText("This is the final round")
         self.counter += 1
-        
+        self.repaint()
+        self.resize(self.minimumSizeHint())
         
     def backB(self):
         gui = GUI.GUI(self.ciphertext, self.key)

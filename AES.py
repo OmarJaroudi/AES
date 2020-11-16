@@ -194,7 +194,7 @@ class AES():
             self.encryptrounds.append(self.enc_string)
             self.enc_string = ""
             self.encOutput.append(transformMatrixToStream(plainText))
-            print(transformMatrixToStream(plainText))
+#            print(transformMatrixToStream(plainText))
 
 
     def SingleRoundDecrypt(self,cipherText,expandedKey,round, MaxRound):
@@ -249,7 +249,7 @@ class AES():
              self.decryptrounds.append(self.dec_string)
              self.dec_string = ""
              self.decOutput.append(transformMatrixToStream(cipherText))
-             print(transformMatrixToStream(cipherText))
+#             print(transformMatrixToStream(cipherText))
                 
 
 #aes = AES()

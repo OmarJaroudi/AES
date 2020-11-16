@@ -6,11 +6,18 @@ Created on Thu Nov 12 16:18:56 2020
 """
 from PyQt5.QtWidgets import QWidget,QLabel,QPushButton,QLineEdit,QHBoxLayout,QVBoxLayout,QSpacerItem
 from AES import AES
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import Qt
-
+import EncryptWindow
+import DecryptWindow
 class GUI(QWidget):
-    def __init__(self):
+    
+    success_signal = pyqtSignal()
+    def __init__(self, plaintext, key):
         super().__init__()
+       
+        
+        
         self.aes = AES()
         
         self.setStyleSheet("QWidget {background-color:#34495e;}")
@@ -18,12 +25,14 @@ class GUI(QWidget):
         self.text = QLineEdit()
         self.text.setPlaceholderText("Plaintext/Ciphertext")
         self.text.setStyleSheet("QLineEdit {color:white;font-size:25px;}")
+        self.text.setText(plaintext)
 
         self.key = QLineEdit()
         self.key.setStyleSheet("QLineEdit {color:white;font-size:25px;}")
         
         self.key.setPlaceholderText("Key")
         self.setFixedSize(500,400)
+        self.key.setText(key)
         
         self.encrypt = QPushButton("Encrypt")
         self.encrypt.setStyleSheet("QPushButton {background-color: #1abc9c;font-size:20px;}")
@@ -62,19 +71,33 @@ class GUI(QWidget):
         
         self.show()
         
+        self.success_signal.connect(lambda:self.cleanUp())
+        
     def encryptRequest(self):
         plaintext = self.text.text()
         key = self.key.text()
         if plaintext=="" or key =="":
             self.errorMessage.setText("Error empty field(s)!")
-        self.aes.Encrypt(plaintext,key)
+        else:
+            enc = EncryptWindow.EncryptWindow(plaintext, key)
+            self.success_signal.emit()
+#        self.aes.Encrypt(plaintext,key)
+        
+        
+        
     
     def decryptRequest(self):
         ciphertext = self.text.text()
         key = self.key.text()
         if ciphertext=="" or key =="":
             self.errorMessage.setText("Error empty field(s)!")
-        self.errorMessage.setText(self.aes.Decrypt(ciphertext,key))
+        else:
+            dec = DecryptWindow.DecryptWindow(ciphertext, key)
+            self.success_signal.emit()
+#        self.errorMessage.setText(self.aes.Decrypt(ciphertext,key))
         
         
         
+    def cleanUp(self):
+        self.close()
+        self.deleteLater()   

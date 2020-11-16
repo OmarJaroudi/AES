@@ -39,7 +39,10 @@ class AES():
         
         self.keyOutput = ""
         self.plainTextOutput = ""
-        
+        self.encryptrounds = []
+        self.decryptrounds = []
+        self.enc_string = ""
+        self.dec_string = ""
 
     def printmatrix(self, data):
         for i in data:
@@ -53,7 +56,21 @@ class AES():
         for i in data:
             self.plainTextOutput += str(" ".join(i)) + "\n"
         self.plainTextOutput += "\n" + "************" + "\n\n"
+        
+    def addToEncString(self, name, data):
+        self.enc_string += str(name) + ": \n" + "\n"
             
+        for i in data:
+            self.enc_string += str(" ".join(i)) + "\n"
+        self.enc_string += "\n" + "\n"
+    
+    def addToDecString(self, name, data):
+        self.dec_string += str(name) + ": \n" + "\n" 
+            
+        for i in data:
+            self.dec_string += str(" ".join(i)) + "\n"
+        self.dec_string += "\n" + "\n"
+        
     def addRoundKey(self,state,key):
         newState = [[0 for j in range(len(state))]for i in range(len(state))]
         for i in range(len(state)):
@@ -119,25 +136,31 @@ class AES():
         if round==1:
             pxorK = self.addRoundKey(plainText,expandedKey[0]) 
             self.addToOutput("First Round XOR", pxorK)
+            self.addToEncString("First Round Xor", pxorK)
         
         else:
             pxorK = plainText
             
         sub = self.substituteBytes(pxorK)
         self.addToOutput("Substitute", sub)
+        self.addToEncString("Substitute", sub)
         
         shift = self.shiftRows(sub)
         self.addToOutput("Shifting", shift)
+        self.addToEncString("Shifting", shift)
         
         if round!= MaxRound:
             mix = self.mixColumns(shift)
             self.addToOutput("Mixing", mix)
+            self.addToEncString("Mixing", mix)
         else: 
             mix =shift
             self.addToOutput("Last Mix", mix)
+            self.addToEncString("Last Mix", mix)
         
         roundResult= self.addRoundKey(mix, expandedKey[round])
         self.addToOutput("Adding round key", roundResult)
+        self.addToEncString("Adding round key", roundResult)
 
         return transformMatrixToStream(roundResult)
     
@@ -166,6 +189,8 @@ class AES():
         
         for i in range(1,MaxRound+1):
             plainText = self.SingleRoundEncrypt(plainText, keys, i,MaxRound)
+            self.encryptrounds.append(self.enc_string)
+            self.enc_string = ""
             print(transformMatrixToStream(plainText))
 
 
@@ -175,20 +200,23 @@ class AES():
          
          if round==1:
              pxorK = self.addRoundKey(cipherText,expandedKey[0])
-        
+             self.addToDecString("First XOR with Round key", pxorK)
          else:
              pxorK = cipherText
          
          
          shift = self.shiftRows(pxorK,True)
+         self.addToDecString("Shifting", shift)
          
          sub = self.substituteBytes(shift,True)
+         self.addToDecString("Substituting", sub)
          
          roundResult = self.addRoundKey(sub, expandedKey[round])
-        
+         self.addToDecString("Adding Round key", roundResult)
      
          if round!= MaxRound:
              mix = self.mixColumns(roundResult,True)
+             self.addToDecString("Mixing", mix)
          else: 
              mix = roundResult
         
@@ -215,15 +243,17 @@ class AES():
 
          for i in range(1,MaxRound + 1):
              cipherText = self.SingleRoundDecrypt(cipherText, keys, i, MaxRound)
+             self.decryptrounds.append(self.dec_string)
+             self.dec_string = ""
              print(transformMatrixToStream(cipherText))
                 
 
-aes = AES()
-cipherText ='b7bf3a5df43989dd97f0fa97ebce2f4a'
-plainText = '000102030405060708090a0b0c0d0e0f'
-key =       '603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4'
-
-aes.Encrypt(plainText,key)
+#aes = AES()
+#cipherText ='b7bf3a5df43989dd97f0fa97ebce2f4a'
+#plainText = '000102030405060708090a0b0c0d0e0f'
+#key =       '603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4'
+#
+#aes.Encrypt(plainText,key)
 
 
 #aes.Decrypt(cipherText, key)

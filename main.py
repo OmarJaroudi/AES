@@ -10,7 +10,7 @@ from GUI import GUI
 
 def run():
    app = QApplication(sys.argv)
-   gui = GUI("", "")
+   gui = GUI("000102030405060708090a0b0c0d0e0f", "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4")
    gui.show()
    sys.exit(app.exec_())
 	

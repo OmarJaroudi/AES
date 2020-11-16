@@ -29,13 +29,19 @@ class DecryptWindow(QWidget):
         self.back = QPushButton("Back")
         self.back.setStyleSheet("QPushButton {background-color: #1abc9c;font-size:20px;}")
         
+        self.RoundOutputs = QLabel("")
+        self.RoundOutputs.setStyleSheet("QLabel {color:white;font-size:15px;}")
         
         self.output = QLabel("Press Next Round to Show Results")
         self.output.setStyleSheet("QLabel {color:white;font-size:15px;}")
-        self.output.setAlignment(Qt.AlignCenter) 
+#        self.output.setAlignment(Qt.AlignCenter) 
+        
+        self.hbox = QHBoxLayout()
+        self.hbox.addWidget(self.output)
+        self.hbox.addWidget(self.RoundOutputs)
         
         self.vbox = QVBoxLayout()
-        self.vbox.addWidget(self.output)
+        self.vbox.addLayout(self.hbox)
         self.vbox.addItem(QSpacerItem(100,50))
         self.vbox.addWidget(self.next_round)
         self.vbox.addItem(QSpacerItem(100,50))
@@ -58,8 +64,11 @@ class DecryptWindow(QWidget):
         self.success_signal.connect(lambda:self.cleanUp())
         
     def decryptrequest(self):
+        if(self.counter == 0):
+            self.RoundOutputs.setText("Round Outputs: \n")
         if(self.counter < len(self.aes.decryptrounds)):
-            self.output.setText(self.aes.decryptrounds[self.counter])
+            self.output.setText("Round " + str(self.counter) + ": \n" + self.aes.decryptrounds[self.counter])
+            self.RoundOutputs.setText(self.RoundOutputs.text() + str(self.aes.decOutput[self.counter] + "\n"))
         else:
             self.errorMessage.setText("This is the final round")
         self.counter += 1

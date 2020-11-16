@@ -43,6 +43,8 @@ class AES():
         self.decryptrounds = []
         self.enc_string = ""
         self.dec_string = ""
+        self.encOutput = []
+        self.decOutput = []
 
     def printmatrix(self, data):
         for i in data:
@@ -191,6 +193,7 @@ class AES():
             plainText = self.SingleRoundEncrypt(plainText, keys, i,MaxRound)
             self.encryptrounds.append(self.enc_string)
             self.enc_string = ""
+            self.encOutput.append(transformMatrixToStream(plainText))
             print(transformMatrixToStream(plainText))
 
 
@@ -245,6 +248,7 @@ class AES():
              cipherText = self.SingleRoundDecrypt(cipherText, keys, i, MaxRound)
              self.decryptrounds.append(self.dec_string)
              self.dec_string = ""
+             self.decOutput.append(transformMatrixToStream(cipherText))
              print(transformMatrixToStream(cipherText))
                 
 

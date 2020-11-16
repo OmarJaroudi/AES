@@ -7,7 +7,20 @@ Created on Sat Nov 14 18:00:30 2020
 from utils import getColumn,xorVectors, transposeMatrix
 from copy import deepcopy
 
+
+def addToOutput(self, name, data, out):
+    out += str(name) + ": \n" + "\n"       
+    for i in data:
+        out += str(" ".join(i)) + "\n"
+    out += "\n" + "\n"
+    
+    return out
+
 def keyExpansion(keyMatrix, rconVectors, sbox):
+    
+    keySteps = []
+    step = ""
+    
     N = len(keyMatrix[0])
     if N==4:
         length = 44
@@ -42,8 +55,7 @@ def keyExpansion(keyMatrix, rconVectors, sbox):
  
     keys = [w[i:i+4] for i in range(0, len(w), 4)]
     
-    
-    
+       
 #    self.keyOutput += "Key Expansion: \n"+  "\n" + "************" + "\n"
 #    for i in keys:
 #        for j in i:

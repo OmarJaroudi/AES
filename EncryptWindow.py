@@ -5,13 +5,11 @@ Created on Mon Nov 16 10:42:57 2020
 @author: WarPeace101
 """
 
-from PyQt5.QtWidgets import QWidget,QLabel,QPushButton,QHBoxLayout,QVBoxLayout,QSpacerItem, QPlainTextEdit, QTextEdit 
+from PyQt5.QtWidgets import QWidget,QLabel,QPushButton,QHBoxLayout,QVBoxLayout, QTextEdit 
 from AES import AES
-from utils import transformStreamToMatrix
 from PyQt5.QtCore import Qt
 import GUI
 from PyQt5.QtCore import pyqtSignal
-import KeyWindow
 
 class EncryptWindow(QWidget):
     success_signal = pyqtSignal()
@@ -43,10 +41,12 @@ class EncryptWindow(QWidget):
         #AES STEPS HERE
         self.RoundOutputs = QTextEdit("")
         self.RoundOutputs.setStyleSheet("QTextEdit {color:white;font-size:15px;}")
+        self.RoundOutputs.setReadOnly(True)
 #        self.next_round = QPushButton("Next Round")
 #        self.next_round.setStyleSheet("QPushButton {background-color: #1abc9c;font-size:20px;}")       
         self.output = QTextEdit("Press Next Round to Show AES Results")
         self.output.setStyleSheet("QTextEdit {color:white;font-size:15px;}")
+        self.output.setReadOnly(True)
         self.hbox = QHBoxLayout()
         self.hbox.addWidget(self.output)
         self.hbox.addWidget(self.RoundOutputs)
@@ -59,12 +59,14 @@ class EncryptWindow(QWidget):
         #KEY EXPANSION STEPS HERE
         self.keyOutput = QTextEdit("")
         self.keyOutput.setStyleSheet("QTextEdit {color:white;font-size:15px;}")
+        self.keyOutput.setReadOnly(True)
 #        self.next_word = QPushButton("Next Word")
 #        self.next_word.setStyleSheet("QPushButton {background-color: #1abc9c;font-size:20px;}")
 #        self.skip = QPushButton("Next 3 words")
 #        self.skip.setStyleSheet("QPushButton {background-color: #1abc9c;font-size:20px;}")
         self.keyexp = QTextEdit("Press Next Round to Show Key Results")
         self.keyexp.setStyleSheet("QTextEdit {color:white;font-size:15px;}")
+        self.keyexp.setReadOnly(True)
         self.hboxkey = QHBoxLayout()
         self.hboxkey.addWidget(self.keyexp)
         self.hboxkey.addWidget(self.keyOutput)

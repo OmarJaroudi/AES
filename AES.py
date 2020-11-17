@@ -5,11 +5,10 @@ Created on Fri Nov  6 13:23:41 2020
 @author: ojaro
 """
 
-from utils import BinToHex,HexToBin,stringXOR,getColumn,xorVectors,transformMatrixToStream,transformStreamToMatrix,transposeMatrix
+from utils import BinToHex,HexToBin,stringXOR,transformMatrixToStream,transformStreamToMatrix
 from galois import multiply
 import numpy as np
 from pickle import load
-from copy import deepcopy
 from KeyExpansion import keyExpansion
 
 class AES():
@@ -250,30 +249,7 @@ class AES():
              self.decryptrounds.append(self.dec_string)
              self.dec_string = ""
              self.decOutput.append(transformMatrixToStream(cipherText))
-#             print(transformMatrixToStream(cipherText))
                 
-
-#aes = AES()
-#cipherText ='b7bf3a5df43989dd97f0fa97ebce2f4a'
-#plainText = '000102030405060708090a0b0c0d0e0f'
-#key =       '603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4'
-#
-#aes.Encrypt(plainText,key)
-
-
-#aes.Decrypt(cipherText, key)
-
-
-#print(aes.plainTextOutput)
-#
-#with open("AES_Encrypt.txt","w") as f:
-#    f.write(aes.plainTextOutput)
-#f.close()
-#
-#with open("KeyExpansion.txt", "w") as f:
-#    f.write(aes.keyOutput)
-#f.close()
-
 
 
     

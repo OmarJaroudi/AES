@@ -5,9 +5,8 @@ Created on Mon Nov 16 10:42:57 2020
 @author: WarPeace101
 """
 
-from PyQt5.QtWidgets import QWidget,QLabel,QPushButton,QHBoxLayout,QVBoxLayout,QSpacerItem, QPlainTextEdit, QTextEdit 
+from PyQt5.QtWidgets import QWidget,QLabel,QPushButton,QHBoxLayout,QVBoxLayout, QTextEdit 
 from AES import AES
-from utils import transformStreamToMatrix
 from PyQt5.QtCore import Qt
 import GUI
 from PyQt5.QtCore import pyqtSignal

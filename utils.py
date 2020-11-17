@@ -5,8 +5,6 @@ Created on Fri Nov  6 13:37:11 2020
 @author: ojaro
 """
 from numpy import transpose
-from math import sqrt
-import pickle as pkl
 
 
 

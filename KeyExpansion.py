@@ -31,6 +31,10 @@ def keyExpansion(keyMatrix, rconVectors, sbox):
     
     w = [getColumn(keyMatrix,i) for i in range(N)]
     
+    for i in range(len(w)):
+        output.append(re.sub("[\]\[\,\']+","",str(w[i])))
+        keySteps.append("Doesn't Change")
+    
     for i in range(N,length):
         step += "Word[i-1]: " + re.sub("[\]\[\,\']+","",str(w[i-1])) + "\n"
         temp = deepcopy(w[i-1]) 
@@ -58,14 +62,13 @@ def keyExpansion(keyMatrix, rconVectors, sbox):
         keySteps.append(step)
         step = ""
         output.append(re.sub("[\]\[\,\']+","",str(w[i])))
+        
+    
     keys = [w[i:i+4] for i in range(0, len(w), 4)]
     
+    
        
-#    self.keyOutput += "Key Expansion: \n"+  "\n" + "************" + "\n"
-#    for i in keys:
-#        for j in i:
-#            self.keyOutput += str(" ".join(j)) + "\n"
-#        self.keyOutput += "\n" + "************" + "\n"
+
     
     for i,k in enumerate(keys):
         keys[i] = transposeMatrix(k)

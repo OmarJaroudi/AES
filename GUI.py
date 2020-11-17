@@ -21,25 +21,25 @@ class GUI(QWidget):
         self.aes = AES()
         
         self.setStyleSheet("QWidget {background-color:#34495e;}")
+           
         
         self.text = QLineEdit()
         self.text.setPlaceholderText("Plaintext/Ciphertext")
-        self.text.setStyleSheet("QLineEdit {color:white;font-size:25px;}")
+        self.text.setStyleSheet("QLineEdit {color:white;font-size:25px; border:1px solid white;border-radius:5%;}")
         self.text.setText(plaintext)
 
         self.key = QLineEdit()
-        self.key.setStyleSheet("QLineEdit {color:white;font-size:25px;}")
+        self.key.setStyleSheet("QLineEdit {color:white;font-size:25px; border:1px solid white;border-radius:5%;}")
         
         self.key.setPlaceholderText("Key")
         self.setFixedSize(500,400)
         self.key.setText(key)
         
         self.encrypt = QPushButton("Encrypt")
-        self.encrypt.setStyleSheet("QPushButton {background-color: #1abc9c;font-size:20px;}")
-        
+        self.encrypt.setStyleSheet("QPushButton {text-decoration: none;border: none;padding: 12px 40px;font-size: 16px;background-color: green;color: #fff;border-radius: 5px;box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);cursor: pointer;outline: none;transition: 0.2s all;}  QPushButton::pressed{background-color : #006400;}")
         
         self.decrypt = QPushButton("Decrypt")
-        self.decrypt.setStyleSheet("QPushButton {background-color: #c0392b;font-size:20px;}")
+        self.decrypt.setStyleSheet("QPushButton {              text-decoration: none;              border: none;              padding: 12px 40px;              font-size: 16px;              background-color: #c0392b;              color: #fff;              border-radius: 5px;              box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);              cursor: pointer;              outline: none;              transition: 0.2s all;          }QPushButton::pressed{background-color : #8b0000;} ")
 
         
         self.hbox = QHBoxLayout()
@@ -72,6 +72,8 @@ class GUI(QWidget):
         self.show()
         
         self.setWindowTitle("AES")
+        
+        
         
         self.success_signal.connect(lambda:self.cleanUp())
         

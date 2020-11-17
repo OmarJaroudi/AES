@@ -80,6 +80,10 @@ class GUI(QWidget):
         key = self.key.text()
         if plaintext=="" or key =="":
             self.errorMessage.setText("Error empty field(s)!")
+        elif len(key)!=32 and len(key)!=48 and len(key)!=64:
+            self.errorMessage.setText("Error invalid key size!")
+        elif len(plaintext)!=32:
+            self.errorMessage.setText("Error invalid text size!")
         else:
             enc = EncryptWindow.EncryptWindow(plaintext, key)
             self.success_signal.emit()
@@ -93,6 +97,10 @@ class GUI(QWidget):
         key = self.key.text()
         if ciphertext=="" or key =="":
             self.errorMessage.setText("Error empty field(s)!")
+        elif len(key)!=32 and len(key)!=48 and len(key)!=64:
+            self.errorMessage.setText("Error invalid key size!")
+        elif len(ciphertext)!=32:
+            self.errorMessage.setText("Error invalid text size!")
         else:
             dec = DecryptWindow.DecryptWindow(ciphertext, key)
             self.success_signal.emit()

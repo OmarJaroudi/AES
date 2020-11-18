@@ -10,8 +10,12 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import Qt
 import EncryptWindow
 import DecryptWindow
+from re import search,compile
+
 class GUI(QWidget):
-    
+    hexPattern = compile(r"^[0-9A-Fa-f]+$")
+
+
     success_signal = pyqtSignal()
     def __init__(self, plaintext, key):
         super().__init__()
@@ -86,6 +90,9 @@ class GUI(QWidget):
             self.errorMessage.setText("Error invalid key size!")
         elif len(plaintext)!=32:
             self.errorMessage.setText("Error invalid text size!")
+       
+        elif not search(self.hexPattern, plaintext) or not search(self.hexPattern,key):
+            self.errorMessage.setText("Error invalid character(s)!")
         else:
             enc = EncryptWindow.EncryptWindow(plaintext, key)
             self.success_signal.emit()
@@ -103,6 +110,8 @@ class GUI(QWidget):
             self.errorMessage.setText("Error invalid key size!")
         elif len(ciphertext)!=32:
             self.errorMessage.setText("Error invalid text size!")
+        elif not search(self.hexPattern, ciphertext) or not search(self.hexPattern,key):
+            self.errorMessage.setText("Error invalid character(s)!")
         else:
             dec = DecryptWindow.DecryptWindow(ciphertext, key)
             self.success_signal.emit()
